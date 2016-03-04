@@ -1,6 +1,14 @@
 import React, {
-    View,Text,StyleSheet, TextInput,TouchableHighlight,ActivityIndicatorIOS
+    View,
+    Text,
+    StyleSheet,
+    TextInput,
+    TouchableHighlight,
+    ActivityIndicatorIOS
 } from 'react-native';
+
+import api from '../Utils/api'
+import Dashboard from './Dashboard'
 
 var styles = StyleSheet.create({
     mainContainer: {
@@ -66,10 +74,22 @@ class Main extends React.Component {
         this.setState({
             isLoading: true
         });
-        console.log('SUBMIT ' + this.state.username)
+        api.getBio(this.state.username).then((res)=> {
+            if (res.message === 'Not Found') {
+                this.setState({error: 'User not found', isLoading: false});
+            } else {
+                this.props.navigator.push({
+                    title: res.name || 'Select an Option',
+                    component: Dashboard,
+                    passProps: {userInfo: res}
+                });
+                this.setState({error: false, isLoading: false});
+            }
+        });
     }
 
     render() {
+        var showErr = this.state.error ? <Text>{this.state.error}</Text> : <View></View>;
         return (
             <View style={styles.mainContainer}>
                 <Text style={styles.title}>Search for a Github User</Text>
@@ -83,6 +103,11 @@ class Main extends React.Component {
                     underlayColor='white'>
                     <Text style={styles.buttonText}> SEARCH </Text>
                 </TouchableHighlight>
+                <ActivityIndicatorIOS
+                    animating={this.state.isLoading}
+                    color="#111"
+                    size="large"/>
+                {showErr}
             </View>
         )
     }
