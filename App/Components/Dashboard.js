@@ -7,6 +7,10 @@ import React, {
 } from 'react-native';
 
 import Profile from './Profile'
+import Repos from './Repos'
+import Notes from './Notes'
+
+import api from '../Utils/api'
 
 
 var styles = StyleSheet.create({
@@ -53,12 +57,32 @@ class Dashboard extends React.Component {
     }
 
     goToRepos() {
-        console.log(arguments.callee.name)
+        api.getRepos(this.props.userInfo.login).then((res)=> {
+            this.props.navigator.push({
+                component: Repos,
+                title: 'Repos',
+                passProps: {
+                    userInfo: this.props.userInfo,
+                    repos: res
+                }
+            });
 
+        });
     }
 
-    goToNotes() {
-        console.log(arguments.callee.name)
+    goToNotes(){
+        api.getNotes(this.props.userInfo.login)
+            .then((jsonRes) => {
+                jsonRes = jsonRes || {};
+                this.props.navigator.push({
+                    component: Notes,
+                    title: 'Notes',
+                    passProps: {
+                        notes: jsonRes,
+                        userInfo: this.props.userInfo
+                    }
+                });
+            });
     }
 
     render() {
@@ -96,4 +120,5 @@ class Dashboard extends React.Component {
 }
 ;
 
-module.exports = Dashboard;
+module
+    .exports = Dashboard;

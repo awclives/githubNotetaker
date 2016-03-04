@@ -13,10 +13,12 @@ var styles = StyleSheet.create({
     },
 });
 
-function Separator(props){
-    return (
-        <View style={styles.separator}/>
-    );
+class Separator extends React.Component {
+    render() {
+        return (
+            <View style={styles.separator}/>
+        );
+    }
 }
 
 export default Separator;
